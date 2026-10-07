@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Room Code Games</title>
+<meta name="description" content="Room Code Games is an independent game studio in Utah.">
+<meta property="og:title" content="Room Code Games">
+<meta property="og:description" content="An independent game studio in Utah.">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23FF4D6D'/%3E%3Ctext x='32' y='44' font-family='Arial Black,Arial' font-weight='900' font-size='34' text-anchor='middle' fill='%230B0F2A'%3ERC%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0B0F2A;
+    --ink-2: #121743;
+    --panel: #171D4F;
+    --line: rgba(142, 149, 194, .22);
+    --text: #EEF0FF;
+    --muted: #9BA2CF;
+    --signal: #FF4D6D;
+    --signal-deep: #C72C50;
+    --volt: #7AA2FF;
+    --gold: #FFC857;
+    --font: "Bricolage Grotesque", "Helvetica Neue", Arial, sans-serif;
+    --gutter: clamp(20px, 5vw, 72px);
+    --max: 1240px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--ink);
+    color: var(--text);
+    font-family: var(--font);
+    font-size: 18px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; border-radius: 4px; }
+  .wrap { max-width: var(--max); margin: 0 auto; padding-left: var(--gutter); padding-right: var(--gutter); }
+
+  /* ---------- nav ---------- */
+  .nav {
+    position: fixed; inset: 0 0 auto 0; z-index: 20;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 22px var(--gutter);
+    background: linear-gradient(to bottom, rgba(11,15,42,.9), rgba(11,15,42,0));
+  }
+  .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; font-weight: 700; letter-spacing: -.01em; }
+  .brand-mark {
+    width: 36px; height: 36px; border-radius: 9px;
+    background: var(--signal);
+    display: grid; place-items: center;
+    color: var(--ink); font-weight: 800; font-size: 15px; letter-spacing: -.02em;
+    box-shadow: 0 0 0 1px rgba(255,255,255,.08), 0 8px 24px rgba(255,77,109,.35);
+  }
+  .nav-links { display: flex; gap: 32px; }
+  .nav-links a { text-decoration: none; color: var(--muted); font-weight: 500; font-size: 16px; transition: color .2s; }
+  .nav-links a:hover { color: var(--text); }
+  @media (max-width: 640px) { .nav-links { display: none; } }
+
+  /* ---------- hero ---------- */
+  .hero {
+    position: relative;
+    min-height: 100svh;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    padding: 120px var(--gutter) 80px;
+    isolation: isolate;
+    overflow: hidden;
+  }
+  #field { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; }
+  .hero::before {
+    content: ""; position: absolute; inset: 0; z-index: -1;
+    background:
+      radial-gradient(60% 50% at 50% 42%, rgba(255,77,109,.18), transparent 70%),
+      radial-gradient(40% 40% at 20% 80%, rgba(122,162,255,.14), transparent 70%),
+      linear-gradient(to bottom, transparent 60%, var(--ink));
+  }
+  .hero-inner { max-width: 960px; }
+
+  .code {
+    display: inline-flex; gap: clamp(8px, 1.6vw, 18px);
+    margin-bottom: clamp(36px, 6vh, 64px);
+  }
+  .slot {
+    position: relative;
+    width: clamp(64px, 14vw, 128px);
+    height: clamp(84px, 18vw, 164px);
+    border-radius: clamp(10px, 1.8vw, 20px);
+    background: linear-gradient(170deg, #1E2560, #11163D);
+    box-shadow:
+      inset 0 1px 0 rgba(255,255,255,.14),
+      inset 0 -2px 0 rgba(0,0,0,.4),
+      0 24px 60px rgba(0,0,0,.5);
+    overflow: hidden;
+    display: grid; place-items: center;
+    font-weight: 800;
+    font-size: clamp(44px, 10vw, 100px);
+    font-stretch: 85%;
+    letter-spacing: -.02em;
+    color: var(--text);
+    text-shadow: 0 0 24px rgba(255,77,109,.45);
+  }
+  .slot::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(to bottom, rgba(255,255,255,.06), transparent 40%, transparent 60%, rgba(0,0,0,.25));
+    pointer-events: none;
+  }
+  .slot span { display: block; transition: transform .35s cubic-bezier(.2,.8,.2,1), opacity .25s; }
+  .slot.spin span { animation: flick .09s steps(1) infinite; }
+  @keyframes flick { 50% { opacity: .35; transform: translateY(-6%); } }
+  .slot.land span { animation: land .5s cubic-bezier(.2,1.2,.3,1); }
+  @keyframes land { 0% { transform: translateY(40%); opacity: 0; } 100% { transform: none; opacity: 1; } }
+  .slot.land { box-shadow: inset 0 1px 0 rgba(255,255,255,.14), inset 0 -2px 0 rgba(0,0,0,.4), 0 24px 60px rgba(0,0,0,.5), 0 0 0 2px rgba(255,77,109,.55), 0 0 48px rgba(255,77,109,.35); }
+
+  .hero h1 {
+    font-size: clamp(40px, 7.2vw, 88px);
+    font-weight: 700;
+    font-stretch: 90%;
+    line-height: .98;
+    letter-spacing: -.035em;
+    margin-bottom: 22px;
+    text-wrap: balance;
+  }
+  .hero p {
+    font-size: clamp(18px, 1.6vw, 22px);
+    color: var(--muted);
+    max-width: 34em;
+    margin: 0 auto 36px;
+    text-wrap: pretty;
+  }
+  .cta-row { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 15px 26px;
+    border-radius: 999px;
+    font-weight: 700; font-size: 16px;
+    text-decoration: none;
+    transition: transform .15s, box-shadow .2s, background .2s;
+  }
+  .btn-primary {
+    background: var(--signal); color: var(--ink);
+    box-shadow: 0 10px 30px rgba(255,77,109,.35);
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 16px 40px rgba(255,77,109,.45); }
+  .btn-ghost { border: 1px solid var(--line); color: var(--text); }
+  .btn-ghost:hover { background: rgba(255,255,255,.05); }
+
+  .scroll-hint {
+    position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
+    width: 26px; height: 42px; border-radius: 14px; border: 2px solid var(--line);
+  }
+  .scroll-hint::after {
+    content: ""; position: absolute; left: 50%; top: 8px; width: 4px; height: 8px; margin-left: -2px;
+    border-radius: 2px; background: var(--muted);
+    animation: drop 1.8s ease-in-out infinite;
+  }
+  @keyframes drop { 0%,100% { transform: translateY(0); opacity: 1; } 70% { transform: translateY(14px); opacity: 0; } }
+
+  /* ---------- sections ---------- */
+  section.block { padding: clamp(80px, 12vh, 140px) 0; }
+  .section-head { display: grid; grid-template-columns: 1fr; gap: 16px; margin-bottom: 48px; max-width: 760px; }
+  .section-head h2 {
+    font-size: clamp(32px, 4.4vw, 56px);
+    font-weight: 700; font-stretch: 92%;
+    letter-spacing: -.03em; line-height: 1.02;
+  }
+  .section-head p { color: var(--muted); font-size: 19px; max-width: 36em; }
+
+  /* ---------- studio ---------- */
+  .studio-grid {
+    display: grid; grid-template-columns: 1.15fr 1fr; gap: clamp(32px, 6vw, 96px);
+    align-items: start;
+  }
+  @media (max-width: 860px) { .studio-grid { grid-template-columns: 1fr; } }
+  .statement {
+    font-size: clamp(28px, 3.6vw, 48px);
+    font-weight: 600; font-stretch: 92%;
+    letter-spacing: -.03em; line-height: 1.08;
+    text-wrap: balance;
+  }
+  .statement em { font-style: normal; color: var(--signal); }
+  .studio-copy p { color: var(--muted); margin-bottom: 18px; max-width: 34em; }
+  .facts { margin-top: 36px; display: grid; gap: 0; border-top: 1px solid var(--line); }
+  .facts div {
+    display: grid; grid-template-columns: 140px 1fr; gap: 16px;
+    padding: 16px 0; border-bottom: 1px solid var(--line);
+  }
+  .facts dt { color: var(--muted); font-size: 15px; }
+  .facts dd { font-weight: 600; }
+
+  /* ---------- pillars ---------- */
+  .pillars { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 72px; }
+  @media (max-width: 860px) { .pillars { grid-template-columns: 1fr; } }
+  .pillar { padding: 28px; border-radius: 18px; border: 1px solid var(--line); background: rgba(23,29,79,.4); }
+  .pillar .glyph { width: 44px; height: 44px; margin-bottom: 20px; }
+  .pillar h3 { font-size: 22px; font-weight: 700; letter-spacing: -.02em; margin-bottom: 8px; }
+  .pillar p { color: var(--muted); font-size: 16px; }
+
+  /* ---------- contact ---------- */
+  .contact {
+    position: relative; overflow: hidden;
+    border-radius: 28px;
+    padding: clamp(48px, 8vw, 96px) clamp(28px, 6vw, 80px);
+    background: linear-gradient(135deg, #1A2060, #0F1340 55%, #2A1444);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 40px 80px rgba(0,0,0,.45);
+    display: grid; grid-template-columns: 1.2fr 1fr; gap: 40px; align-items: center;
+  }
+  @media (max-width: 860px) { .contact { grid-template-columns: 1fr; } }
+  .contact::before {
+    content: ""; position: absolute; width: 520px; height: 520px; right: -160px; top: -200px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,77,109,.35), transparent 65%);
+    pointer-events: none;
+  }
+  .contact h2 {
+    font-size: clamp(32px, 4.4vw, 56px);
+    font-weight: 700; font-stretch: 92%;
+    letter-spacing: -.03em; line-height: 1.02; margin-bottom: 14px;
+  }
+  .contact p { color: var(--muted); max-width: 32em; }
+  .contact-actions { position: relative; display: grid; gap: 14px; justify-items: start; }
+  @media (min-width: 861px) { .contact-actions { justify-items: end; } }
+  .contact-actions small { color: var(--muted); font-size: 15px; }
+
+  /* ---------- footer ---------- */
+  footer { padding: 48px 0 40px; color: var(--muted); font-size: 15px; }
+  .foot { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; align-items: center; }
+  .foot a { color: var(--muted); text-decoration: none; }
+  .foot a:hover { color: var(--text); }
+  .foot-links { display: flex; gap: 24px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .slot.spin span, .slot.land span, .scroll-hint::after { animation: none !important; }
+    .btn, .nav-links a { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav" aria-label="Main">
+  <a class="brand" href="#top"><span class="brand-mark" aria-hidden="true">RC</span>Room Code Games</a>
+  <div class="nav-links">
+    <a href="#studio">Studio</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <canvas id="field" aria-hidden="true"></canvas>
+  <div class="hero-inner">
+    <div class="code" id="code" aria-label="Room code">
+      <div class="slot"><span>R</span></div>
+      <div class="slot"><span>O</span></div>
+      <div class="slot"><span>O</span></div>
+      <div class="slot"><span>M</span></div>
+    </div>
+    <h1>Games built to be remembered.</h1>
+    <p>Room Code Games is an independent game studio in Utah.</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" href="#studio">About the studio</a>
+      <a class="btn btn-ghost" href="mailto:contact@roomcodegames.com">Get in touch</a>
+    </div>
+  </div>
+  <div class="scroll-hint" aria-hidden="true"></div>
+</header>
+
+<main>
+  <section class="block" id="studio">
+    <div class="wrap">
+      <div class="studio-grid">
+        <p class="statement">We're a small studio that would rather ship <em>one game people love</em> than ten they forget.</p>
+        <div class="studio-copy">
+          <p>Room Code Games was founded in Utah to make the kind of games we wanted on our own shelves. Every project gets the same attention to feel, polish, and the small details that make a game stick.</p>
+          <p>We're a small team by design. It keeps us close to the work and lets us move quickly.</p>
+          <dl class="facts">
+            <div><dt>Founded</dt><dd>2026</dd></div>
+            <div><dt>Based in</dt><dd>Utah, USA</dd></div>
+            <div><dt>Platforms</dt><dd>PC and mobile</dd></div>
+          </dl>
+        </div>
+      </div>
+
+      <div class="pillars">
+        <div class="pillar">
+          <svg class="glyph" viewBox="0 0 44 44" fill="none" aria-hidden="true"><rect x="4" y="10" width="36" height="24" rx="4" stroke="#FF4D6D" stroke-width="2.5"/><path d="M14 38h16" stroke="#FF4D6D" stroke-width="2.5" stroke-linecap="round"/></svg>
+          <h3>Easy to pick up</h3>
+          <p>Getting into a game should take seconds, not a tutorial. We design so the first minute is already fun.</p>
+        </div>
+        <div class="pillar">
+          <svg class="glyph" viewBox="0 0 44 44" fill="none" aria-hidden="true"><path d="M22 6l4.5 9.5L37 17l-7.5 7 2 10.5L22 29.5 12.5 34.5l2-10.5L7 17l10.5-1.5z" stroke="#FFC857" stroke-width="2.5" stroke-linejoin="round"/></svg>
+          <h3>Polished, not padded</h3>
+          <p>Shorter games finished properly beat long games full of filler. We cut until what's left is worth your time.</p>
+        </div>
+        <div class="pillar">
+          <svg class="glyph" viewBox="0 0 44 44" fill="none" aria-hidden="true"><circle cx="22" cy="22" r="15" stroke="#7AA2FF" stroke-width="2.5"/><path d="M22 12v10l7 4" stroke="#7AA2FF" stroke-width="2.5" stroke-linecap="round"/></svg>
+          <h3>Built to last</h3>
+          <p>Games you'll still bring out years from now, with updates that add to them instead of resetting them.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="contact">
+    <div class="wrap">
+      <div class="contact">
+        <div>
+          <h2>Say hello.</h2>
+          <p>Press, publishing, platform partners, or just someone who likes games. We read everything.</p>
+        </div>
+        <div class="contact-actions">
+          <a class="btn btn-primary" href="mailto:contact@roomcodegames.com">contact@roomcodegames.com</a>
+          <small>We usually reply within a few days.</small>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <div>&copy; <span id="yr">2026</span> Room Code Games LLC. Utah, USA.</div>
+    <div class="foot-links">
+      <a href="#studio">Studio</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="mailto:contact@roomcodegames.com">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  document.getElementById('yr').textContent = new Date().getFullYear();
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---- room code slots ---- */
+  var slots = Array.prototype.slice.call(document.querySelectorAll('#code .slot'));
+  var words = ['ROOM', 'CODE', 'PLAY', 'GAME'];
+  var alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
+  var idx = 0;
+
+  function rollTo(word) {
+    slots.forEach(function (slot, i) {
+      var span = slot.firstElementChild;
+      slot.classList.remove('land');
+      slot.classList.add('spin');
+      var ticks = 0;
+      var t = setInterval(function () {
+        span.textContent = alphabet[Math.floor(Math.random() * alphabet.length)];
+        if (++ticks > 10 + i * 4) {
+          clearInterval(t);
+          span.textContent = word[i];
+          slot.classList.remove('spin');
+          slot.classList.add('land');
+        }
+      }, 60);
+    });
+  }
+
+  if (!reduce) {
+    setTimeout(function () { rollTo(words[0]); }, 500);
+    setInterval(function () {
+      idx = (idx + 1) % words.length;
+      rollTo(words[idx]);
+    }, 4200);
+  } else {
+    slots.forEach(function (s) { s.classList.add('land'); });
+  }
+
+  /* ---- drifting field ---- */
+  var cv = document.getElementById('field');
+  var ctx = cv.getContext('2d');
+  var W, H, dots = [], mx = 0, my = 0, dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+  function size() {
+    W = cv.clientWidth; H = cv.clientHeight;
+    cv.width = W * dpr; cv.height = H * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    var n = Math.min(160, Math.floor((W * H) / 9000));
+    dots = [];
+    for (var i = 0; i < n; i++) {
+      var z = Math.random();
+      dots.push({ x: Math.random() * W, y: Math.random() * H, z: z, r: .6 + z * 1.6, vy: -(.08 + z * .35), tw: Math.random() * 6.28 });
+    }
+  }
+
+  function frame(t) {
+    ctx.clearRect(0, 0, W, H);
+    for (var i = 0; i < dots.length; i++) {
+      var d = dots[i];
+      d.y += d.vy; d.x += (mx * d.z) * .15;
+      if (d.y < -4) { d.y = H + 4; d.x = Math.random() * W; }
+      if (d.x < -4) d.x = W + 4; if (d.x > W + 4) d.x = -4;
+      var a = .25 + .55 * (.5 + .5 * Math.sin(t * .0015 + d.tw)) * d.z;
+      ctx.fillStyle = d.z > .75 ? 'rgba(255,77,109,' + a + ')' : 'rgba(238,240,255,' + a + ')';
+      ctx.beginPath(); ctx.arc(d.x, d.y, d.r, 0, 6.28); ctx.fill();
+    }
+    if (!reduce) requestAnimationFrame(frame);
+  }
+
+  size();
+  window.addEventListener('resize', size);
+  window.addEventListener('mousemove', function (e) { mx = (e.clientX / W - .5) * 2; my = (e.clientY / H - .5) * 2; });
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
